@@ -1,6 +1,6 @@
 import streamlit as st
 import logging
-from server import guardrail_input, ask_with_guardrail
+from Group_103_RAG_Chatbot_Re_Ranking_with_Cross_Encoders.server import guardrail_input, ask_with_guardrail
 
 def main():
     st.title("Group 103 Advanced RAG Chatbot")
