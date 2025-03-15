@@ -3,6 +3,14 @@
 # -------------------------------
 
 import pdfplumber
+from sentence_transformers import SentenceTransformer
+import numpy as np
+import faiss
+from rank_bm25 import BM25Okapi
+from sklearn.preprocessing import MinMaxScaler
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch
+from transformers import pipeline
 
 def extract_text_from_pdf(pdf_path):
     """
@@ -26,10 +34,6 @@ chunks = extract_text_from_pdf(pdf_path)
 # 2. Embedding-based Retrieval Setup
 # -------------------------------
 
-from sentence_transformers import SentenceTransformer
-import numpy as np
-import faiss
-
 # Load an open-source embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 doc_embeddings = embedding_model.encode(chunks, convert_to_numpy=True).astype(np.float32)
@@ -42,9 +46,6 @@ faiss_index.add(doc_embeddings)
 # -------------------------------
 # BM25 for Keyword-Based Retrieval
 # -------------------------------
-
-from rank_bm25 import BM25Okapi
-from sklearn.preprocessing import MinMaxScaler
 
 # Tokenize chunks for BM25 (simple whitespace tokenization)
 tokenized_chunks = [chunk.lower().split() for chunk in chunks]
@@ -93,9 +94,6 @@ def hybrid_search(query, alpha=0.5, initial_k=5, final_k=3):
 # 5. Cross-Encoder Re-Ranking for Advanced RAG
 # -------------------------------
 
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-import torch
-
 # Load cross-encoder model for re-ranking
 cross_encoder_tokenizer = AutoTokenizer.from_pretrained("cross-encoder/ms-marco-MiniLM-L-6-v2")
 cross_encoder_model = AutoModelForSequenceClassification.from_pretrained("cross-encoder/ms-marco-MiniLM-L-6-v2")
@@ -126,8 +124,6 @@ def advanced_retrieve(query, alpha=0.5, initial_k=5, final_k=3):
 # -------------------------------
 # 6. Response Generation using TinyLlama
 # -------------------------------
-
-from transformers import pipeline
 
 # Initialize TinyLlama using a pipeline for text-generation
 # Note: Adjust max_length, temperature, etc., as needed.
